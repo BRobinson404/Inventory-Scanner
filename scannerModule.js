@@ -24,7 +24,8 @@ export function initScanner(onDetected) {
         },
         decoder: {
             readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
-        }
+        },
+        locate: true // Helps with barcode detection
     }, function (err) {
         if (err) {
             console.error("Quagga initialization failed:", err);
@@ -46,11 +47,12 @@ export function initScanner(onDetected) {
     scannerContainer.appendChild(reticle);
 
     Quagga.onDetected(function (result) {
-        let code = result.codeResult.code;
-        if (code) {
-            beep.play(); // Play beep sound on scan
-            onDetected(code);
-        }
+        let code = String(result.codeResult.code); // Ensure barcode is always a string
+        let format = result.codeResult.format; // Get barcode format
+
+        console.log("Detected Barcode:", code, "Format:", format);
+        beep.play(); // Play beep sound on scan
+        onDetected(code);
     });
 }
 
