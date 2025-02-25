@@ -4,7 +4,6 @@ export function initScanner(onDetected) {
         return;
     }
 
-    // Add a beep sound
     const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3"); 
 
     Quagga.init({
@@ -13,19 +12,27 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: document.querySelector("#scanner-container"),
             constraints: {
-                width: 400, // Adjust to fit container width
-                height: 300, // Adjust height to ~250-300px
-                facingMode: "environment" // Use the back camera
+                width: 400,
+                height: 300,
+                facingMode: "environment"
             }
         },
         locator: {
             patchSize: "medium",
-            halfSample: true
+            halfSample: false, // Increase image clarity
         },
         decoder: {
-            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
+            readers: [
+                "code_128_reader", 
+                "ean_reader", 
+                "ean_8_reader", 
+                "upc_reader",
+                "upc_e_reader",
+                "code_39_reader"
+            ],
+            multiple: false // Prevent multiple reads from conflicting
         },
-        locate: true // Helps with barcode detection
+        locate: true // Helps with tricky barcode positions
     }, function (err) {
         if (err) {
             console.error("Quagga initialization failed:", err);
@@ -34,7 +41,6 @@ export function initScanner(onDetected) {
         Quagga.start();
     });
 
-    // Add reticle overlay
     const scannerContainer = document.querySelector("#scanner-container");
     const reticle = document.createElement("div");
     reticle.style.position = "absolute";
@@ -46,13 +52,38 @@ export function initScanner(onDetected) {
     reticle.style.transform = "translateY(-50%)";
     scannerContainer.appendChild(reticle);
 
-    Quagga.onDetected(function (result) {
-        let code = String(result.codeResult.code); // Ensure barcode is always a string
-        let format = result.codeResult.format; // Get barcode format
+    Quagga.onProcessed(function (result) {
+        if (result) {
+            // Draw detected barcode bounding boxes
+            const canvas = Quagga.canvas.dom.overlay;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        console.log("Detected Barcode:", code, "Format:", format);
-        beep.play(); // Play beep sound on scan
-        onDetected(code);
+            if (result.boxes) {
+                result.boxes.forEach(box => {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "green";
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(box[0].x, box[0].y);
+                    box.forEach((point, index) => {
+                        if (index > 0) ctx.lineTo(point.x, point.y);
+                    });
+                    ctx.closePath();
+                    ctx.stroke();
+                });
+            }
+        }
+    });
+
+    Quagga.onDetected(function (result) {
+        let code = result.codeResult.code;
+        let format = result.codeResult.format;
+        console.log(`Scanned: ${code}, Format: ${format}`);
+
+        if (code) {
+            beep.play();
+            onDetected(String(code)); // Ensure it's always treated as a string
+        }
     });
 }
 
