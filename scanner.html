@@ -68,11 +68,6 @@
       overflow-y: auto;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
-    .scan-log p {
-      margin: 5px 0;
-      font-size: 14px;
-      color: #333;
-    }
     #exportBtn {
       margin-top: 20px;
       background: #ffc107;
@@ -85,6 +80,22 @@
       position: relative;
       background: black;
       overflow: hidden;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .last-scan {
+      font-weight: bold;
+      color: #007BFF;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -100,9 +111,16 @@
       <button id="scanBtn">Add Scan</button>
       <button id="startCameraBtn" style="background:#007BFF; margin-top:10px;">Start Camera Scan</button>
     </div>
-    <div class="scan-log" id="scanLog">
-      <p><em>No scans yet.</em></p>
-    </div>
+    <p class="last-scan">Last Scanned Item: <span id="lastScan">None</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody id="scanTableBody"></tbody>
+    </table>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
@@ -112,36 +130,11 @@
     const username = localStorage.getItem('username') || 'Unknown';
     document.getElementById('techName').textContent = username;
 
-    const userMappings = {
-      'Donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
-      'Kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
-      'Ryan@moebiz.biz': {warehouse:'RYAN', bin: 'RYAN'},
-      'Joel@moebiz.biz': {warehouse:'Joel', bin: 'CAR STOCK'},
-      'Matt@moebiz.biz': {warehouse:'Matt', bin: 'CAR STOCK'},
-      'Christopher@moebiz.biz' : {warehouse:'Chris', bin: 'Chris'},
-      'John@moebiz.biz' : {warehouse:'John', bin: 'John'},
-      'demo@moebiz.biz' : {warehouse:'demo', bin: 'demo'}
-    };
-
-    function getUserWarehouseAndBin(username) {
-      if (userMappings.hasOwnProperty(username)) {
-        return userMappings[username];
-      } else {
-        alert(`Error: User ${username} is not authorized to scan inventory.`);
-        return null;
-      }
-    }
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('username');
-      window.location.href = 'index.html';
-    });
-
-    let scans = [];
+    let scannedItems = {};
 
     document.getElementById('scanBtn').addEventListener('click', () => {
       const barcodeInput = document.getElementById('barcodeInput');
-      const barcode = barcodeInput.value.trim();
+      const barcode = barcodeInput.value.trim().toUpperCase();
       if (barcode !== '') {
         addScan(barcode);
         barcodeInput.value = '';
@@ -150,65 +143,43 @@
     });
 
     function addScan(barcode) {
-      const timestamp = new Date().toLocaleString();
-      const userInfo = getUserWarehouseAndBin(username);
-      if (!userInfo) return;
-
-      const scanRecord = {
-        Warehouse: userInfo.warehouse,
-        Bin: userInfo.bin,
-        Item: barcode,
-        Quantity: 1,
-        TimeStamp: timestamp,
-        InventoriedBy: username
-      };
-      scans.push(scanRecord);
-      updateScanLog();
-    }
-
-    function updateScanLog() {
-      const logDiv = document.getElementById('scanLog');
-      logDiv.innerHTML = '';
-      if (scans.length === 0) {
-        logDiv.innerHTML = '<p><em>No scans yet.</em></p>';
+      document.getElementById('lastScan').textContent = barcode;
+      if (scannedItems[barcode]) {
+        scannedItems[barcode] += 1;
       } else {
-        scans.forEach((scan, index) => {
-          const p = document.createElement('p');
-          p.textContent = `${index + 1}. ${scan.Item} scanned at ${scan.TimeStamp}`;
-          logDiv.appendChild(p);
-        });
+        scannedItems[barcode] = 1;
       }
+      updateTable();
     }
 
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      if (scans.length === 0) {
-        alert('No scans to export.');
-        return;
+    function updateTable() {
+      const tbody = document.getElementById('scanTableBody');
+      tbody.innerHTML = '';
+      for (let barcode in scannedItems) {
+        let row = document.createElement('tr');
+        let itemCell = document.createElement('td');
+        itemCell.textContent = barcode;
+        let qtyCell = document.createElement('td');
+        let qtyInput = document.createElement('input');
+        qtyInput.type = 'number';
+        qtyInput.value = scannedItems[barcode];
+        qtyInput.dataset.barcode = barcode;
+        qtyInput.addEventListener('change', function() {
+          let newQty = parseInt(this.value, 10);
+          if (newQty > 0) {
+            scannedItems[this.dataset.barcode] = newQty;
+          } else {
+            delete scannedItems[this.dataset.barcode];
+          }
+          updateTable();
+        });
+        qtyCell.appendChild(qtyInput);
+        row.appendChild(itemCell);
+        row.appendChild(qtyCell);
+        tbody.appendChild(row);
       }
-
-      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-      scans.forEach(scan => {
-        csvContent += `${scan.Warehouse},${scan.Bin},${scan.Item},${scan.Quantity},${scan.TimeStamp},${scan.InventoriedBy}\n`;
-      });
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'inventory_scans.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      alert(`CSV generated. An email with subject "Inventory Scan Submission – ${username}" would be sent.`);
-    });
-
-    document.getElementById('startCameraBtn').addEventListener('click', () => {
-      document.getElementById('scanner-container').style.display = 'block';
-      initScanner(detectedCode => {
-        alert("Barcode detected: " + detectedCode);
-        addScan(detectedCode);
-      });
-    });
+    }
   </script>
 </body>
 </html>
+
