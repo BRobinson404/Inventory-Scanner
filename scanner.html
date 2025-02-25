@@ -77,16 +77,15 @@
       margin-top: 20px;
       background: #ffc107;
     }
-    /* Container for the live camera feed */
     #scanner-container {
-    width: 100%; /* Match parent container width */
-    max-width: 400px; /* Prevent overflowing */
-    height: 300px; /* Set height to 300px */
-    margin: auto;
-    position: relative;
-    background: black; /* Better visibility */
-    overflow: hidden; /* Prevent video overflow */
-}
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+      margin: auto;
+      position: relative;
+      background: black;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
@@ -95,7 +94,6 @@
     <button id="logoutBtn">Log Out</button>
   </header>
   <main>
-    <!-- Scanner container for live camera feed -->
     <div id="scanner-container"></div>
     <div class="scan-form">
       <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
@@ -107,18 +105,32 @@
     </div>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
-
-  <!-- Include QuaggaJS library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-  <!-- Import our scanner module -->
   <script type="module">
     import { initScanner, stopScanner } from './scannerModule.js';
 
-    // Load username from localStorage
-    const username = localStorage.getItem('username') || 'Technician';
+    const username = localStorage.getItem('username') || 'Unknown';
     document.getElementById('techName').textContent = username;
 
-    // Log out functionality
+    const userMappings = {
+      'Donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
+      'Kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
+      'Ryan@moebiz.biz': {warehouse:'', bin: ''},
+      'Joel@moebiz.biz': {warehouse:'', bin: ''},
+      'Matt@moebiz.biz': {warehouse:'', bin: ''},
+      'Christopher@moebiz.biz' : {warehouse:'', bin: ''},
+      'John@moebiz.biz' : {warehouse:'', bin: ''}
+    };
+
+    function getUserWarehouseAndBin(username) {
+      if (userMappings.hasOwnProperty(username)) {
+        return userMappings[username];
+      } else {
+        alert(`Error: User ${username} is not authorized to scan inventory.`);
+        return null;
+      }
+    }
+
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('username');
       window.location.href = 'index.html';
@@ -126,7 +138,6 @@
 
     let scans = [];
 
-    // Handle manual scan input
     document.getElementById('scanBtn').addEventListener('click', () => {
       const barcodeInput = document.getElementById('barcodeInput');
       const barcode = barcodeInput.value.trim();
@@ -137,12 +148,14 @@
       }
     });
 
-    // Function to add scan and update the log
     function addScan(barcode) {
       const timestamp = new Date().toLocaleString();
+      const userInfo = getUserWarehouseAndBin(username);
+      if (!userInfo) return;
+
       const scanRecord = {
-        Warehouse: 'DONNIE',
-        Bin: 'CAR STOCK',
+        Warehouse: userInfo.warehouse,
+        Bin: userInfo.bin,
         Item: barcode,
         Quantity: 1,
         TimeStamp: timestamp,
@@ -152,7 +165,6 @@
       updateScanLog();
     }
 
-    // Update scan log display
     function updateScanLog() {
       const logDiv = document.getElementById('scanLog');
       logDiv.innerHTML = '';
@@ -167,7 +179,6 @@
       }
     }
 
-    // CSV Export and Email simulation
     document.getElementById('exportBtn').addEventListener('click', () => {
       if (scans.length === 0) {
         alert('No scans to export.');
@@ -181,31 +192,22 @@
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
-      
       const a = document.createElement('a');
       a.href = url;
       a.download = 'inventory_scans.csv';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      
       alert(`CSV generated. An email with subject "Inventory Scan Submission – ${username}" would be sent.`);
     });
 
-    // Start camera scanning when button is clicked
     document.getElementById('startCameraBtn').addEventListener('click', () => {
-      // Show the scanner container
       document.getElementById('scanner-container').style.display = 'block';
-      // Initialize the scanner, passing a callback to handle detected barcodes
-      initScanner(function(detectedCode) {
+      initScanner(detectedCode => {
         alert("Barcode detected: " + detectedCode);
         addScan(detectedCode);
-        // Optionally stop scanner after detection or continue scanning
-        // stopScanner();
       });
     });
   </script>
 </body>
 </html>
-
-

@@ -24,10 +24,6 @@ export function initScanner(onDetected) {
         decoder: {
             readers: [
                 "code_128_reader", 
-                "ean_reader", 
-                "ean_8_reader", 
-                "upc_reader",
-                "upc_e_reader",
                 "code_39_reader"
             ],
             multiple: false // Prevent multiple reads from conflicting
