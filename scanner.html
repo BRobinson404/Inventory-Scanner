@@ -79,12 +79,14 @@
     }
     /* Container for the live camera feed */
     #scanner-container {
-      width: 100%;
-      max-width: 400px;
-      margin: auto;
-      position: relative;
-      display: none; /* Hidden by default; shown when scanning */
-    }
+    width: 100%; /* Match parent container width */
+    max-width: 400px; /* Prevent overflowing */
+    height: 300px; /* Set height to 300px */
+    margin: auto;
+    position: relative;
+    background: black; /* Better visibility */
+    overflow: hidden; /* Prevent video overflow */
+}
   </style>
 </head>
 <body>
