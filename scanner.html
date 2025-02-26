@@ -123,18 +123,19 @@
     </table>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
-  <script>
-    let scans = {};
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <script type="module">
+    import { initScanner, stopScanner } from './scannerModule.js';
 
-    document.getElementById('scanBtn').addEventListener('click', () => {
-      const barcodeInput = document.getElementById('barcodeInput');
-      const barcode = barcodeInput.value.trim();
-      if (barcode !== '') {
-        addScan(barcode);
-        barcodeInput.value = '';
-        barcodeInput.focus();
-      }
+    document.getElementById('startCameraBtn').addEventListener('click', () => {
+      document.getElementById('scanner-container').style.display = 'block';
+      initScanner(detectedCode => {
+        alert("Barcode detected: " + detectedCode);
+        addScan(detectedCode);
+      });
     });
+
+    let scans = {};
 
     function addScan(barcode) {
       const timestamp = new Date().toLocaleString();
