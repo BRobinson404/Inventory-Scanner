@@ -127,6 +127,21 @@
   <script type="module">
     import { initScanner, stopScanner } from './scannerModule.js';
 
+    const userMappings = {
+      'Donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
+      'Kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
+      'Ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
+      'Joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
+      'Matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
+      'Christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
+      'John@moebiz.biz': { warehouse: 'John', bin: 'John' },
+      'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
+    };
+
+    let currentUser = localStorage.getItem('loggedInUser') || 'demo@moebiz.biz'; // Default to demo if no user is logged in
+    let userWarehouse = userMappings[currentUser]?.warehouse || 'UNKNOWN';
+    let userBin = userMappings[currentUser]?.bin || 'UNKNOWN';
+
     document.getElementById('startCameraBtn').addEventListener('click', () => {
       document.getElementById('scanner-container').style.display = 'block';
       initScanner(detectedCode => {
@@ -137,6 +152,16 @@
 
     let scans = {};
 
+    document.getElementById('scanBtn').addEventListener('click', () => {
+      const barcodeInput = document.getElementById('barcodeInput');
+      const barcode = barcodeInput.value.trim();
+      if (barcode !== '') {
+        addScan(barcode);
+        barcodeInput.value = '';
+        barcodeInput.focus();
+      }
+    });
+
     function addScan(barcode) {
       const timestamp = new Date().toLocaleString();
       document.getElementById('lastScanned').textContent = barcode;
@@ -144,7 +169,12 @@
       if (scans[barcode]) {
         scans[barcode].quantity += 1;
       } else {
-        scans[barcode] = { quantity: 1, timestamp };
+        scans[barcode] = { 
+          quantity: 1, 
+          timestamp, 
+          warehouse: userWarehouse, 
+          bin: userBin 
+        };
       }
       updateScanTable();
     }
@@ -158,6 +188,8 @@
           <td>${barcode}</td>
           <td contenteditable="true" oninput="updateQuantity('${barcode}', this.textContent)">${data.quantity}</td>
           <td>${data.timestamp}</td>
+          <td>${data.warehouse}</td>
+          <td>${data.bin}</td>
         `;
         tableBody.appendChild(row);
       }
@@ -171,9 +203,9 @@
     }
 
     document.getElementById('exportBtn').addEventListener('click', () => {
-      let csvContent = 'Item,Quantity,Timestamp\n';
+      let csvContent = 'Item,Quantity,Timestamp,Warehouse,Bin\n';
       for (const [barcode, data] of Object.entries(scans)) {
-        csvContent += `${barcode},${data.quantity},${data.timestamp}\n`;
+        csvContent += `${barcode},${data.quantity},${data.timestamp},${data.warehouse},${data.bin}\n`;
       }
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -184,6 +216,7 @@
       a.click();
       document.body.removeChild(a);
     });
+
   </script>
 </body>
 </html>
