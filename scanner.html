@@ -129,18 +129,30 @@
 
     const userMappings = {
       'Donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
+      'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
       'Kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
+      'kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
       'Ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
+      'ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
       'Joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
+      'joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
       'Matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
+      'matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
       'Christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
+      'christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
       'John@moebiz.biz': { warehouse: 'John', bin: 'John' },
+      'john@moebiz.biz': { warehouse: 'John', bin: 'John' },
       'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
     };
 
-    let currentUser = localStorage.getItem('loggedInUser') || 'demo@moebiz.biz'; // Default to demo if no user is logged in
+    let currentUser = localStorage.getItem('loggedInUser')
+      if (!currentUser){
+        window.location.href = index.html
+      };
     let userWarehouse = userMappings[currentUser]?.warehouse || 'UNKNOWN';
     let userBin = userMappings[currentUser]?.bin || 'UNKNOWN';
+
+    document.getElementById('techName').textContent = currentUser;
 
     document.getElementById('startCameraBtn').addEventListener('click', () => {
       document.getElementById('scanner-container').style.display = 'block';
