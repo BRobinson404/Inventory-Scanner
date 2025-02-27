@@ -71,22 +71,22 @@
 
   <script>
     const validUsers = [
-      'donnie@moebiz.biz',
-      'kevin@moebiz.biz',
-      'ryan@moebiz.biz',
-      'joel@moebiz.biz',
-      'matt@moebiz.biz',
-      'christopher@moebiz.biz',
-      'john@moebiz.biz',
+      'Donnie@moebiz.biz',
+      'Kevin@moebiz.biz',
+      'Ryan@moebiz.biz',
+      'Joel@moebiz.biz',
+      'Matt@moebiz.biz',
+      'Christopher@moebiz.biz',
+      'John@moebiz.biz',
       'demo@moebiz.biz'
     ];
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const username = document.getElementById('username').value.trim().toLowerCase(); // Convert input to lowercase
+      const username = document.getElementById('username').value.trim().toLowerCase();
       const errorMessage = document.getElementById('errorMessage');
 
-      if (validUsers.map(user => user.toLowerCase()).includes(username)) { // Compare in lowercase
+      if (validUsers.map(user => user.toLowerCase()).includes(username)) {
         localStorage.setItem('loggedInUser', username);
         window.location.href = 'scanner.html';
       } else {

@@ -72,21 +72,6 @@
       margin-top: 20px;
       background: #ffc107;
     }
-    table {
-      width: 100%;
-      margin-top: 20px;
-      border-collapse: collapse;
-      background: #fff;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background: #007BFF;
-      color: white;
-    }
   </style>
 </head>
 <body>
@@ -100,54 +85,23 @@
       <button id="scanBtn">Add Scan</button>
     </div>
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Timestamp</th>
-        </tr>
-      </thead>
-      <tbody id="scanTableBody"></tbody>
-    </table>
+    <div class="scan-log" id="scanLog"></div>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-  <script type="module">
-    
-    const userMappings = {
-      'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
-      'kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
-      'ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
-      'joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
-      'matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
-      'christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
-      'john@moebiz.biz': { warehouse: 'John', bin: 'John' },
-      'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
-    };
-
-    let currentUser = localStorage.getItem('loggedInUser')?.toLowerCase();
-    console.log("Retrieved user from localStorage:", currentUser);
-
-    if (!currentUser || currentUser === "null") {
-      console.warn("No user found, redirecting...");
+  <script>
+    let currentUser = localStorage.getItem('loggedInUser');
+    if (!currentUser) {
       window.location.href = 'index.html';
-    } else {
-      console.log("User recognized:", currentUser);
-      let userInfo = userMappings[currentUser] || { warehouse: 'UNKNOWN', bin: 'UNKNOWN' };
-      var userWarehouse = userInfo.warehouse;
-      var userBin = userInfo.bin;
-      console.log("Assigned Warehouse:", userWarehouse, "Bin:", userBin);
     }
 
     document.getElementById('techName').textContent = currentUser;
 
-    let scans = {};
+    let scans = [];
 
     document.getElementById('scanBtn').addEventListener('click', () => {
       const barcodeInput = document.getElementById('barcodeInput');
       const barcode = barcodeInput.value.trim();
-      if (barcode !== '') {
+      if (barcode) {
         addScan(barcode);
         barcodeInput.value = '';
         barcodeInput.focus();
@@ -156,33 +110,36 @@
 
     function addScan(barcode) {
       const now = new Date();
-      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().slice(0, 5);
+      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
-      scans[barcode] = { quantity: 1, timestamp, warehouse: userWarehouse, bin: userBin };
-      updateScanTable();
+      scans.push({ barcode, timestamp, user: currentUser });
+      updateScanLog();
     }
 
-    function updateScanTable() {
-      const tableBody = document.getElementById('scanTableBody');
-      tableBody.innerHTML = '';
-      for (const [barcode, data] of Object.entries(scans)) {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${barcode}</td><td>${data.quantity}</td><td>${data.timestamp}</td>`;
-        tableBody.appendChild(row);
-      }
+    function updateScanLog() {
+      const scanLog = document.getElementById('scanLog');
+      scanLog.innerHTML = '';
+      scans.forEach(scan => {
+        const div = document.createElement('div');
+        div.textContent = `${scan.timestamp} - ${scan.barcode} (by ${scan.user})`;
+        scanLog.appendChild(div);
+      });
     }
 
     document.getElementById('exportBtn').addEventListener('click', () => {
-      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-      for (const [barcode, data] of Object.entries(scans)) {
-        csvContent += `${data.warehouse},${data.bin},${barcode},${data.quantity},${data.timestamp},${currentUser}\n`;
-      }
+      let csvContent = 'Item,Timestamp,Inventoried By\n';
+      scans.forEach(scan => {
+        csvContent += `${scan.barcode},${scan.timestamp},${scan.user}\n`;
+      });
+
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'inventory_scans.csv';
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
