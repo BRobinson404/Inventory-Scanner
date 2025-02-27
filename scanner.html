@@ -190,8 +190,6 @@
           <td>${barcode}</td>
           <td contenteditable="true" oninput="updateQuantity('${barcode}', this.textContent)">${data.quantity}</td>
           <td>${data.timestamp}</td>
-          <td>${data.warehouse}</td>
-          <td>${data.bin}</td>
         `;
         tableBody.appendChild(row);
       }
@@ -205,25 +203,22 @@
     }
 
     document.getElementById('exportBtn').addEventListener('click', () => {
-      if (scans.length === 0) {
-        alert('No scans to export.');
-        return;
-      }
+    let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
 
-      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-      scans.forEach(scan => {
-        csvContent += `${scan.Warehouse},${scan.Bin},${scan.Item},${scan.Quantity},${scan.TimeStamp},${scan.InventoriedBy}\n`;
-      });
+    for (const [barcode, data] of Object.entries(scans)) {
+        csvContent += `${data.warehouse},${data.bin},${barcode},${data.quantity},${data.timestamp},${currentUser}\n`;
+    }
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'inventory_scans.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'inventory_scans.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+});
+
 
   </script>
 </body>
