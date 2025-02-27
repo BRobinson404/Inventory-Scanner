@@ -72,15 +72,6 @@
       margin-top: 20px;
       background: #ffc107;
     }
-    #scanner-container {
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
-      margin: auto;
-      position: relative;
-      background: black;
-      overflow: hidden;
-    }
     table {
       width: 100%;
       margin-top: 20px;
@@ -104,11 +95,9 @@
     <button id="logoutBtn">Log Out</button>
   </header>
   <main>
-    <div id="scanner-container"></div>
     <div class="scan-form">
       <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
       <button id="scanBtn">Add Scan</button>
-      <button id="startCameraBtn" style="background:#007BFF; margin-top:10px;">Start Camera Scan</button>
     </div>
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
     <table>
@@ -123,44 +112,33 @@
     </table>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-  <script type="module">
-    import { initScanner, stopScanner } from './scannerModule.js';
-
+  <script>
     const userMappings = {
-      'Donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
       'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
-      'Kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
       'kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
-      'Ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
       'ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
-      'Joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
       'joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
-      'Matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
       'matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
-      'Christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
       'christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
-      'John@moebiz.biz': { warehouse: 'John', bin: 'John' },
       'john@moebiz.biz': { warehouse: 'John', bin: 'John' },
       'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
     };
 
-    let currentUser = localStorage.getItem('loggedInUser')
-      if (!currentUser){
-        window.location.href = 'index.html'
-      };
-    let userWarehouse = userMappings[currentUser]?.warehouse || 'UNKNOWN';
-    let userBin = userMappings[currentUser]?.bin || 'UNKNOWN';
+    let currentUser = localStorage.getItem('loggedInUser')?.toLowerCase();
+    console.log("Retrieved user from localStorage:", currentUser);
+
+    if (!currentUser || currentUser === "null") {
+      console.warn("No user found, redirecting...");
+      window.location.href = 'index.html';
+    } else {
+      console.log("User recognized:", currentUser);
+      let userInfo = userMappings[currentUser] || { warehouse: 'UNKNOWN', bin: 'UNKNOWN' };
+      var userWarehouse = userInfo.warehouse;
+      var userBin = userInfo.bin;
+      console.log("Assigned Warehouse:", userWarehouse, "Bin:", userBin);
+    }
 
     document.getElementById('techName').textContent = currentUser;
-
-    document.getElementById('startCameraBtn').addEventListener('click', () => {
-      document.getElementById('scanner-container').style.display = 'block';
-      initScanner(detectedCode => {
-        alert("Barcode detected: " + detectedCode);
-        addScan(detectedCode);
-      });
-    });
 
     let scans = {};
 
@@ -176,19 +154,9 @@
 
     function addScan(barcode) {
       const now = new Date();
-      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
+      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
-
-      if (scans[barcode]) {
-        scans[barcode].quantity += 1;
-      } else {
-        scans[barcode] = { 
-          quantity: 1, 
-          timestamp, 
-          warehouse: userWarehouse, 
-          bin: userBin 
-        };
-      }
+      scans[barcode] = { quantity: 1, timestamp, warehouse: userWarehouse, bin: userBin };
       updateScanTable();
     }
 
@@ -197,44 +165,28 @@
       tableBody.innerHTML = '';
       for (const [barcode, data] of Object.entries(scans)) {
         const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${barcode}</td>
-          <td contenteditable="true" oninput="updateQuantity('${barcode}', this.textContent)">${data.quantity}</td>
-          <td>${data.timestamp}</td>
-        `;
+        row.innerHTML = `<td>${barcode}</td><td>${data.quantity}</td><td>${data.timestamp}</td>`;
         tableBody.appendChild(row);
       }
     }
 
-    function updateQuantity(barcode, newQuantity) {
-      const quantity = parseInt(newQuantity, 10);
-      if (!isNaN(quantity) && quantity > 0) {
-        scans[barcode].quantity = quantity;
-      }
-    }
-
     document.getElementById('exportBtn').addEventListener('click', () => {
-    let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-
-    for (const [barcode, data] of Object.entries(scans)) {
+      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
+      for (const [barcode, data] of Object.entries(scans)) {
         csvContent += `${data.warehouse},${data.bin},${barcode},${data.quantity},${data.timestamp},${currentUser}\n`;
-    }
+      }
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory_scans.csv';
+      a.click();
+    });
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventory_scans.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-});
-
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('loggedInUser'); // Clears stored login session
-  window.location.href = 'index.html'; // Redirects to the login page
-});
-
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('loggedInUser');
+      window.location.href = 'index.html';
+    });
   </script>
 </body>
 </html>
