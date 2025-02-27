@@ -165,7 +165,8 @@
     });
 
     function addScan(barcode) {
-      const timestamp = new Date().toLocaleString();
+      const now = new Date();
+      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
 
       if (scans[barcode]) {
