@@ -147,7 +147,7 @@
 
     let currentUser = localStorage.getItem('loggedInUser')
       if (!currentUser){
-        window.location.href = index.html
+        window.location.href = 'index.html'
       };
     let userWarehouse = userMappings[currentUser]?.warehouse || 'UNKNOWN';
     let userBin = userMappings[currentUser]?.bin || 'UNKNOWN';
@@ -234,8 +234,6 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('loggedInUser'); // Clears stored login session
   window.location.href = 'index.html'; // Redirects to the login page
 });
-
-
 
   </script>
 </body>
