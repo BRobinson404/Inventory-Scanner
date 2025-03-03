@@ -161,6 +161,19 @@
 
     let scans = [];
 
+    // User mapping data
+    const userMappings = {
+      'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
+      'kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
+      'ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
+      'joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
+      'matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
+      'christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
+      'john@moebiz.biz': { warehouse: 'John', bin: 'John' },
+      'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
+    };
+
+    // Handle barcode scan input
     document.getElementById('scanBtn').addEventListener('click', () => {
       const barcodeInput = document.getElementById('barcodeInput');
       const barcode = barcodeInput.value.trim();
@@ -171,6 +184,7 @@
       }
     });
 
+    // Function to add scanned barcode to list
     function addScan(barcode) {
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
@@ -179,6 +193,7 @@
       updateScanLog();
     }
 
+    // Function to update the scan log
     function updateScanLog() {
       const scanLog = document.getElementById('scanLog');
       scanLog.innerHTML = '';
@@ -189,11 +204,36 @@
       });
     }
 
+    // Export CSV Button event listener
     document.getElementById('exportBtn').addEventListener('click', () => {
-      let csvContent = 'Item,Timestamp,Inventoried By\n';
+      // Get warehouse and bin information for the current user
+      const userInfo = userMappings[currentUser] || { warehouse: 'Unknown', bin: 'Unknown' };
+      
+      // Prepare CSV content
+      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
+      
       scans.forEach(scan => {
-        csvContent += `${scan.barcode},${scan.timestamp},${scan.user}\n`;
+        // Format Item (with leading zero if numerical)
+        let item = scan.barcode.trim();
+        let itemFormatted = item;
+
+        if (!isNaN(itemFormatted[0])) {
+          // Add leading zero for numbers that start with a numeral
+          itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
+        }
+        
+        // Ensure Item is treated as text (with quotes)
+        itemFormatted = `"${itemFormatted}"`;
+
+        // Format timestamp to m/d/yyyy hh:mm
+        const now = new Date(scan.timestamp);
+        const timestamp = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        // Append row for each scan
+        csvContent += `${userInfo.warehouse},${userInfo.bin},${itemFormatted},1,${timestamp},${currentUser}\n`;
       });
+
+      // Create and trigger CSV download
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -204,11 +244,13 @@
       document.body.removeChild(a);
     });
 
+    // Logout Button event listener
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('loggedInUser');
       window.location.href = 'index.html';
     });
 
+    // Start Scanner Button event listener
     document.getElementById('startScanBtn').addEventListener('click', () => {
       document.getElementById('scanner-container').style.display = 'block';
       document.getElementById('startScanBtn').style.display = 'none';
@@ -216,6 +258,7 @@
       initScanner(addScan);
     });
 
+    // Stop Scanner Button event listener
     document.getElementById('stopScanBtn').addEventListener('click', () => {
       stopScanner();
       document.getElementById('scanner-container').style.display = 'none';
