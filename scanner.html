@@ -21,11 +21,18 @@
       text-align: center;
       position: relative;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
     }
     header h2 {
       margin: 0;
+    }
+    header .header-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
     }
     header button {
       background: #dc3545;
@@ -37,11 +44,9 @@
     }
     #exportBtn {
       background: #28a745;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      color: #fff;
-      cursor: pointer;
+    }
+    #exportBtn:hover {
+      background: #218838;
     }
     main {
       flex: 1;
@@ -116,7 +121,7 @@
 <body>
   <header>
     <h2>Welcome, <span id="techName"></span></h2>
-    <div>
+    <div class="header-buttons">
       <button id="exportBtn">Export & Email CSV</button>
       <button id="logoutBtn">Log Out</button>
     </div>
