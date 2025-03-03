@@ -205,44 +205,51 @@
     }
 
     // Export CSV Button event listener
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      // Get warehouse and bin information for the current user
-      const userInfo = userMappings[currentUser] || { warehouse: 'Unknown', bin: 'Unknown' };
-      
-      // Prepare CSV content
-      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-      
-      scans.forEach(scan => {
-        // Format Item (with leading zero if numerical)
-        let item = scan.barcode.trim();
-        let itemFormatted = item;
+document.getElementById('exportBtn').addEventListener('click', () => {
+  // Get warehouse and bin information for the current user
+  const userInfo = userMappings[currentUser] || { warehouse: 'Unknown', bin: 'Unknown' };
+  
+  // Prepare CSV content
+  let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
+  
+  scans.forEach(scan => {
+    // Format Item (with leading zero if numerical)
+    let item = scan.barcode.trim();
+    let itemFormatted = item;
 
-        if (!isNaN(itemFormatted[0])) {
-          // Add leading zero for numbers that start with a numeral
-          itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
-        }
-        
-        // Ensure Item is treated as text (with quotes)
-        itemFormatted = `"${itemFormatted}"`;
+    if (!isNaN(itemFormatted[0])) {
+      // Add leading zero for numbers that start with a numeral
+      itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
+    }
+    
+    // Ensure Item is treated as text (with quotes)
+    itemFormatted = `"${itemFormatted}"`;
 
-        // Format timestamp to m/d/yyyy hh:mm
-        const now = new Date(scan.timestamp);
-        const timestamp = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-        
-        // Append row for each scan
-        csvContent += `${userInfo.warehouse},${userInfo.bin},${itemFormatted},1,${timestamp},${currentUser}\n`;
-      });
+    // Format timestamp to m/d/yyyy hh:mm (12-hour format without AM/PM)
+    const now = new Date(scan.timestamp);
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    
+    // Convert to 12-hour format
+    const formattedHours = hours % 12 || 12; // 12-hour format, "0" becomes "12"
+    const formattedMinutes = String(minutes).padStart(2, '0'); // Ensure minutes are 2 digits
+    
+    const timestamp = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${formattedHours}:${formattedMinutes}`;
+    
+    // Append row for each scan
+    csvContent += `${userInfo.warehouse},${userInfo.bin},${itemFormatted},1,${timestamp},${currentUser}\n`;
+  });
 
-      // Create and trigger CSV download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'inventory_scans.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    });
+  // Create and trigger CSV download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'inventory_scans.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
 
     // Logout Button event listener
     document.getElementById('logoutBtn').addEventListener('click', () => {
