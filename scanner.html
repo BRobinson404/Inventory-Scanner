@@ -50,12 +50,14 @@
     #exportBtn:hover {
       background: #218838;
     }
+    #logoutBtn:hover {
+      background: #a71d2a;
+    }
     main {
       flex: 1;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       overflow-y: auto;
     }
@@ -114,13 +116,12 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
     #scanner-container {
-      width: 300px;
-      height: 300px;
-      max-height: 300px;
+      width: 100%;
+      max-width: 300px;
       background: black;
       margin-bottom: 20px;
       position: relative;
-      display: none; /* Initially hidden until scanner starts */
+      display: none; /* Initially hidden */
     }
   </style>
 </head>
@@ -134,12 +135,17 @@
   </header>
   <main>
     <div class="scan-form">
+      <!-- Scanner container, which will be revealed when the scanner starts -->
       <div id="scanner-container"></div>
+      
+      <!-- Barcode input field and action buttons -->
       <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
       <button id="scanBtn">Add Scan</button>
       <button id="startScanBtn">Start Scanner</button>
       <button id="stopScanBtn">Stop Scanner</button>
     </div>
+
+    <!-- Last scanned barcode and logs -->
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
     <div class="scan-log" id="scanLog"></div>
   </main>
