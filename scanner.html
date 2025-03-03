@@ -106,23 +106,35 @@
     #stopScanBtn:hover {
       background: #a71d2a;
     }
-    .scan-log {
-      margin-top: 20px;
-      background: #fff;
-      padding: 10px;
-      border-radius: 4px;
-      max-height: 200px;
-      overflow-y: auto;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
     #scanner-container {
-    width: 300px;
-    height: 300px;
-    background: black;
-    margin: 10px auto;
-    position: relative;
-    overflow: hidden;
-}
+      width: 300px;
+      height: 300px;
+      background: black;
+      margin: 10px auto;
+      position: relative;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +159,7 @@
 
     <!-- Last scanned barcode and logs -->
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
+    <!-- Scan log will now be a table -->
     <div class="scan-log" id="scanLog"></div>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
@@ -189,67 +202,98 @@
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
-      scans.push({ barcode, timestamp, user: currentUser });
+      scans.push({ barcode, timestamp, user: currentUser, quantity: 1 });
       updateScanLog();
     }
 
-    // Function to update the scan log
+    // Function to update the scan log (table with editable quantity and delete button)
     function updateScanLog() {
       const scanLog = document.getElementById('scanLog');
-      scanLog.innerHTML = '';
-      scans.forEach(scan => {
-        const div = document.createElement('div');
-        div.textContent = `${scan.timestamp} - ${scan.barcode} (by ${scan.user})`;
-        scanLog.appendChild(div);
+      scanLog.innerHTML = ''; // Clear previous content
+
+      const table = document.createElement('table');
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      `;
+
+      scans.forEach((scan, index) => {
+        const row = document.createElement('tr');
+
+        const itemCell = document.createElement('td');
+        itemCell.textContent = scan.barcode;
+        row.appendChild(itemCell);
+
+        const quantityCell = document.createElement('td');
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'number';
+        quantityInput.value = scan.quantity;
+        quantityInput.min = 1;
+        quantityInput.addEventListener('input', (e) => {
+          scan.quantity = e.target.value; // Update quantity in scans array
+        });
+        quantityCell.appendChild(quantityInput);
+        row.appendChild(quantityCell);
+
+        const actionCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => {
+          scans.splice(index, 1);
+          updateScanLog(); // Re-render table after deletion
+        });
+        actionCell.appendChild(deleteButton);
+        row.appendChild(actionCell);
+
+        table.querySelector('tbody').appendChild(row);
       });
+
+      scanLog.appendChild(table);
     }
 
     // Export CSV Button event listener
-document.getElementById('exportBtn').addEventListener('click', () => {
-  // Get warehouse and bin information for the current user
-  const userInfo = userMappings[currentUser] || { warehouse: 'Unknown', bin: 'Unknown' };
-  
-  // Prepare CSV content
-  let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
-  
-  scans.forEach(scan => {
-    // Format Item (with leading zero if numerical)
-    let item = scan.barcode.trim();
-    let itemFormatted = item;
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const userInfo = userMappings[currentUser] || { warehouse: 'Unknown', bin: 'Unknown' };
 
-    if (!isNaN(itemFormatted[0])) {
-      // Add leading zero for numbers that start with a numeral
-      itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
-    }
-    
-    // Ensure Item is treated as text (with quotes)
-    itemFormatted = `"${itemFormatted}"`;
+      let csvContent = 'Warehouse,Bin,Item,Quantity,TimeStamp,Inventoried by\n';
+      
+      scans.forEach(scan => {
+        let item = scan.barcode.trim();
+        let itemFormatted = item;
 
-    // Format timestamp to m/d/yyyy hh:mm (12-hour format without AM/PM)
-    const now = new Date(scan.timestamp);
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    
-    // Convert to 12-hour format
-    const formattedHours = hours % 12 || 12; // 12-hour format, "0" becomes "12"
-    const formattedMinutes = String(minutes).padStart(2, '0'); // Ensure minutes are 2 digits
-    
-    const timestamp = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${formattedHours}:${formattedMinutes}`;
-    
-    // Append row for each scan
-    csvContent += `${userInfo.warehouse},${userInfo.bin},${itemFormatted},1,${timestamp},${currentUser}\n`;
-  });
+        if (!isNaN(itemFormatted[0])) {
+          itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
+        }
 
-  // Create and trigger CSV download
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'inventory_scans.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-});
+        itemFormatted = `"${itemFormatted}"`;
+
+        const now = new Date(scan.timestamp);
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const formattedHours = hours % 12 || 12;
+        const formattedMinutes = String(minutes).padStart(2, '0');
+        
+        const timestamp = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${formattedHours}:${formattedMinutes}`;
+
+        csvContent += `${userInfo.warehouse},${userInfo.bin},${itemFormatted},${scan.quantity},${timestamp},${currentUser}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory_scans.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
 
     // Logout Button event listener
     document.getElementById('logoutBtn').addEventListener('click', () => {
