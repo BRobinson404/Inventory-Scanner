@@ -14,8 +14,8 @@ export function initScanner(onDetected) {
     const height = scannerContainer.offsetHeight;
 
     // Set fixed size for the scanner viewport
-    scannerContainer.style.width = `${width}px`; // Dynamically use container width
-    scannerContainer.style.height = `${height}px`; // Dynamically use container height
+    scannerContainer.style.width = "300px"; // or set to any fixed value you need
+    scannerContainer.style.height = "300px"; // this can also be adjusted
 
     Quagga.init({
         inputStream: {
@@ -23,8 +23,8 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: scannerContainer,
             constraints: {
-                width: width,  // Use dynamic container width
-                height: height, // Use dynamic container height
+                width: 300,  // Fixed width for video feed
+                height: 300, // Fixed height for video feed
                 facingMode: "environment"
             }
         },
@@ -48,7 +48,6 @@ export function initScanner(onDetected) {
         Quagga.start();
     });
 
-    // Create reticle and position it relative to the container
     const reticle = document.createElement("div");
     reticle.style.position = "absolute";
     reticle.style.top = "50%";
@@ -58,20 +57,6 @@ export function initScanner(onDetected) {
     reticle.style.background = "red";
     reticle.style.transform = "translateY(-50%)";
     scannerContainer.appendChild(reticle);
-
-    // Recalculate the reticle position and size if the container size changes (responsive handling)
-    const updateReticlePosition = () => {
-        const containerWidth = scannerContainer.offsetWidth;
-        const containerHeight = scannerContainer.offsetHeight;
-        reticle.style.width = `${containerWidth}px`;
-        reticle.style.top = `${containerHeight / 2}px`; // Keep it centered vertically
-    };
-
-    // Initially update reticle position
-    updateReticlePosition();
-
-    // Add event listener to handle window resize if needed
-    window.addEventListener('resize', updateReticlePosition);
 
     Quagga.onProcessed(function (result) {
         if (result) {
