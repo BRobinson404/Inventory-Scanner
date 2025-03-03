@@ -4,26 +4,18 @@ export function initScanner(onDetected) {
         return;
     }
 
-    const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3");
+    const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3"); 
     let lastScannedCode = null;
 
     const scannerContainer = document.querySelector("#scanner-container");
     
-    // Ensure the scanner container is visible
-    scannerContainer.style.display = "block";
-    
-    // Dynamically set constraints based on the container's size, only if it has dimensions
+    // Dynamically set constraints based on the container's size
     const width = scannerContainer.offsetWidth;
     const height = scannerContainer.offsetHeight;
-    
-    if (width === 0 || height === 0) {
-        console.error("Scanner container has no size.");
-        return;
-    }
 
     // Set fixed size for the scanner viewport
-    scannerContainer.style.width = `${width}px`;
-    scannerContainer.style.height = `${height}px`;
+    scannerContainer.style.width = `${width}px`; // Dynamically use container width
+    scannerContainer.style.height = `${height}px`; // Dynamically use container height
 
     Quagga.init({
         inputStream: {
@@ -31,8 +23,8 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: scannerContainer,
             constraints: {
-                width: width,
-                height: height,
+                width: width,  // Use dynamic container width
+                height: height, // Use dynamic container height
                 facingMode: "environment"
             }
         },
@@ -72,7 +64,7 @@ export function initScanner(onDetected) {
         const containerWidth = scannerContainer.offsetWidth;
         const containerHeight = scannerContainer.offsetHeight;
         reticle.style.width = `${containerWidth}px`;
-        reticle.style.top = `${containerHeight / 2}px`;
+        reticle.style.top = `${containerHeight / 2}px`; // Keep it centered vertically
     };
 
     // Initially update reticle position
@@ -90,7 +82,7 @@ export function initScanner(onDetected) {
             if (result.boxes) {
                 result.boxes.forEach(box => {
                     ctx.beginPath();
-                    ctx.strokeStyle = "#00FF00";
+                    ctx.strokeStyle = "#00FF00"; // Bright green for visibility
                     ctx.lineWidth = 2;
                     ctx.moveTo(box[0].x, box[0].y);
                     box.forEach((point, index) => {
@@ -112,4 +104,9 @@ export function initScanner(onDetected) {
             setTimeout(() => { lastScannedCode = null; }, 2000); // Prevent duplicates within 2 seconds
         }
     });
+}
+
+export function stopScanner() {
+    Quagga.stop();
+    document.querySelector("#scanner-container").style.display = "none";
 }
