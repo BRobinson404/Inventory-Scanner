@@ -17,15 +17,26 @@
     header {
       background: #007BFF;
       color: #fff;
-      padding: 15px;
+      padding: 15px 20px;
       text-align: center;
       position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h2 {
+      margin: 0;
     }
     header button {
-      position: absolute;
-      right: 15px;
-      top: 15px;
       background: #dc3545;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+    }
+    #exportBtn {
+      background: #28a745;
       border: none;
       padding: 8px 12px;
       border-radius: 4px;
@@ -55,6 +66,13 @@
       cursor: pointer;
       margin-bottom: 10px;
     }
+    #scanBtn {
+      background: #28a745;
+      color: white;
+    }
+    #scanBtn:hover {
+      background: #218838;
+    }
     #startScanBtn {
       background: #007bff;
       color: white;
@@ -80,8 +98,7 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
     #scanner-container {
-      width: 100%;
-      max-width: 400px;
+      width: 300px;
       height: 300px;
       background: black;
       margin: 10px auto;
@@ -92,19 +109,21 @@
 <body>
   <header>
     <h2>Welcome, <span id="techName"></span></h2>
-    <button id="logoutBtn">Log Out</button>
+    <div>
+      <button id="exportBtn">Export & Email CSV</button>
+      <button id="logoutBtn">Log Out</button>
+    </div>
   </header>
   <main>
     <div class="scan-form">
-      <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
       <button id="scanBtn">Add Scan</button>
+      <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
       <button id="startScanBtn">Start Scanner</button>
       <button id="stopScanBtn">Stop Scanner</button>
     </div>
     <div id="scanner-container"></div>
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
     <div class="scan-log" id="scanLog"></div>
-    <button id="exportBtn">Export & Email CSV</button>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
   <script type="module">
