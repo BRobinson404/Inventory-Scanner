@@ -78,12 +78,13 @@
     
     /* Scanner and Reticle Styles */
     #scanner-container {
-        position: relative;
+        position: sticky;
+        top: 0;
         width: 100%;
-        height: 60vh; /* Adjust to desired scanner container size */
+        height: 50vh; /* Adjust to keep it visible */
         background-color: black;
         overflow: hidden;
-        margin-top: 20px; /* Space between header and scanner */
+        z-index: 100;
     }
     
     #scanner-container video {
@@ -143,6 +144,18 @@
         background: #a71d2a;
     }
     
+    .scan-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        position: sticky;
+        top: 50vh;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 99;
+    }
     .scan-log {
         margin-top: 20px;
         background: #fff;
@@ -160,7 +173,7 @@
     }
     
     th, td {
-        padding: 10px;
+        padding: 12px;
         text-align: left;
     }
     
@@ -170,12 +183,14 @@
     }
     
     td {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #000000;
     }
     
     input[type="number"] {
-        width: 60px;
+        width: 80px;
         text-align: center;
+        padding: 6px;
+        border-radius: 4px;
     }
     
     @media (max-width: 600px) {
