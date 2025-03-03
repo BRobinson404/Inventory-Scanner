@@ -13,9 +13,9 @@ export function initScanner(onDetected) {
     const width = scannerContainer.offsetWidth;
     const height = scannerContainer.offsetHeight;
 
-    // If the container doesn't have a set height, we will use a default value
-    const defaultHeight = 300;
-    const scannerHeight = height > 0 ? height : defaultHeight;
+    // Set fixed size for the scanner viewport
+    scannerContainer.style.width = "300px"; // or set to any fixed value you need
+    scannerContainer.style.height = "300px"; // this can also be adjusted
 
     Quagga.init({
         inputStream: {
@@ -23,8 +23,8 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: scannerContainer,
             constraints: {
-                width: width,
-                height: scannerHeight,
+                width: 300,  // Fixed width for video feed
+                height: 300, // Fixed height for video feed
                 facingMode: "environment"
             }
         },
