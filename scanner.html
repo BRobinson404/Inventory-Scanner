@@ -13,7 +13,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow-x: hidden; /* Prevent horizontal scrolling */
+      overflow-x: hidden;
     }
     header {
       background: #007BFF;
@@ -118,11 +118,11 @@
       background: #fff;
       padding: 10px;
       border-radius: 4px;
-      max-height: 200px;
-      overflow-y: auto;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 350px;
+      max-width: 800px; /* Increase the width for better table visibility */
+      overflow-x: auto; /* Allow horizontal scrolling if needed */
+      max-height: 400px; /* Limit table height to avoid overflow issues */
     }
     #scanner-container {
       width: 100%;
@@ -224,6 +224,7 @@
       scanLog.innerHTML = ''; // Clear previous content
 
       const table = document.createElement('table');
+      table.style.width = '100%'; // Make sure the table takes full width
       table.innerHTML = `
         <thead>
           <tr>
