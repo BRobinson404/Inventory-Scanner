@@ -48,7 +48,9 @@ export function initScanner(onDetected) {
         Quagga.start();
     });
 
+    // Create reticle with an id for better targeting
     const reticle = document.createElement("div");
+    reticle.id = "scanner-reticle";  // Add an ID for targeting
     reticle.style.position = "absolute";
     reticle.style.top = "50%";
     reticle.style.left = "0";
