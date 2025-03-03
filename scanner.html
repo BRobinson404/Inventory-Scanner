@@ -40,7 +40,7 @@
       display: flex;
       flex-direction: column;
     }
-    input[type="text"] {
+    input[type="text"], input[type="number"] {
       padding: 12px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
@@ -88,7 +88,22 @@
     <div class="scan-log" id="scanLog"></div>
     <button id="exportBtn">Export & Email CSV</button>
   </main>
-  <script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <script type="module">
+    import { initScanner, stopScanner } from './scannerModule.js';
+
+    const userMappings = {
+      'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
+      'kevin@moebiz.biz': { warehouse: 'KEVIN', bin: 'KEVIN' },
+      'ryan@moebiz.biz': { warehouse: 'RYAN', bin: 'RYAN' },
+      'joel@moebiz.biz': { warehouse: 'Joel', bin: 'CAR STOCK' },
+      'matt@moebiz.biz': { warehouse: 'Matt', bin: 'CAR STOCK' },
+      'christopher@moebiz.biz': { warehouse: 'Chris', bin: 'Chris' },
+      'john@moebiz.biz': { warehouse: 'John', bin: 'John' },
+      'demo@moebiz.biz': { warehouse: 'demo', bin: 'demo' }
+    };
+
     let currentUser = localStorage.getItem('loggedInUser');
     if (!currentUser) {
       window.location.href = 'index.html';
@@ -112,24 +127,38 @@
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
-      scans.push({ barcode, timestamp, user: currentUser });
+      const userInfo = userMappings[currentUser.toLowerCase()] || { warehouse: 'UNKNOWN', bin: 'UNKNOWN' };
+      scans.push({ barcode, timestamp, user: currentUser, warehouse: userInfo.warehouse, bin: userInfo.bin, qty: 1 });
       updateScanLog();
     }
 
     function updateScanLog() {
       const scanLog = document.getElementById('scanLog');
       scanLog.innerHTML = '';
-      scans.forEach(scan => {
+      scans.forEach((scan, index) => {
         const div = document.createElement('div');
-        div.textContent = `${scan.timestamp} - ${scan.barcode} (by ${scan.user})`;
+        div.innerHTML = `${scan.timestamp} - ${scan.barcode} (by ${scan.user}) - Qty: 
+          <input type="number" value="${scan.qty}" min="1" onchange="updateQty(${index}, this.value)" />
+          <button onclick="deleteScan(${index})">Delete</button>`;
         scanLog.appendChild(div);
       });
     }
 
+    function updateQty(index, value) {
+      scans[index].qty = parseInt(value, 10) || 1;
+    }
+
+    function deleteScan(index) {
+      if (confirm("Are you sure you want to delete this scan?")) {
+        scans.splice(index, 1);
+        updateScanLog();
+      }
+    }
+
     document.getElementById('exportBtn').addEventListener('click', () => {
-      let csvContent = 'Item,Timestamp,Inventoried By\n';
+      let csvContent = 'Item,Timestamp,Inventoried By,Warehouse,Bin,Quantity\n';
       scans.forEach(scan => {
-        csvContent += `${scan.barcode},${scan.timestamp},${scan.user}\n`;
+        csvContent += `${scan.barcode},${scan.timestamp},${scan.user},${scan.warehouse},${scan.bin},${scan.qty}\n`;
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -149,3 +178,4 @@
   </script>
 </body>
 </html>
+

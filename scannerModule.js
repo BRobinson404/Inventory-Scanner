@@ -5,6 +5,7 @@ export function initScanner(onDetected) {
     }
 
     const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3"); 
+    let lastScannedCode = null;
 
     Quagga.init({
         inputStream: {
@@ -19,16 +20,16 @@ export function initScanner(onDetected) {
         },
         locator: {
             patchSize: "medium",
-            halfSample: false, // Increase image clarity
+            halfSample: false,
         },
         decoder: {
             readers: [
                 "code_128_reader", 
                 "code_39_reader"
             ],
-            multiple: false // Prevent multiple reads from conflicting
+            multiple: false
         },
-        locate: true // Helps with tricky barcode positions
+        locate: true
     }, function (err) {
         if (err) {
             console.error("Quagga initialization failed:", err);
@@ -50,7 +51,6 @@ export function initScanner(onDetected) {
 
     Quagga.onProcessed(function (result) {
         if (result) {
-            // Draw detected barcode bounding boxes
             const canvas = Quagga.canvas.dom.overlay;
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -58,7 +58,7 @@ export function initScanner(onDetected) {
             if (result.boxes) {
                 result.boxes.forEach(box => {
                     ctx.beginPath();
-                    ctx.strokeStyle = "green";
+                    ctx.strokeStyle = "#00FF00"; // Bright green for visibility
                     ctx.lineWidth = 2;
                     ctx.moveTo(box[0].x, box[0].y);
                     box.forEach((point, index) => {
@@ -73,12 +73,11 @@ export function initScanner(onDetected) {
 
     Quagga.onDetected(function (result) {
         let code = result.codeResult.code;
-        let format = result.codeResult.format;
-        console.log(`Scanned: ${code}, Format: ${format}`);
-
-        if (code) {
+        if (code && code !== lastScannedCode) {
+            lastScannedCode = code;
             beep.play();
-            onDetected(String(code)); // Ensure it's always treated as a string
+            onDetected(String(code));
+            setTimeout(() => { lastScannedCode = null; }, 2000); // Prevent duplicates within 2 seconds
         }
     });
 }
