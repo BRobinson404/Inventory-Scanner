@@ -7,14 +7,24 @@ export function initScanner(onDetected) {
     const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3"); 
     let lastScannedCode = null;
 
+    const scannerContainer = document.querySelector("#scanner-container");
+    
+    // Dynamically set constraints based on the container's size
+    const width = scannerContainer.offsetWidth;
+    const height = scannerContainer.offsetHeight;
+
+    // If the container doesn't have a set height, we will use a default value
+    const defaultHeight = 300;
+    const scannerHeight = height > 0 ? height : defaultHeight;
+
     Quagga.init({
         inputStream: {
             name: "Live",
             type: "LiveStream",
-            target: document.querySelector("#scanner-container"),
+            target: scannerContainer,
             constraints: {
-                width: 400,
-                height: 300,
+                width: width,
+                height: scannerHeight,
                 facingMode: "environment"
             }
         },
@@ -38,7 +48,6 @@ export function initScanner(onDetected) {
         Quagga.start();
     });
 
-    const scannerContainer = document.querySelector("#scanner-container");
     const reticle = document.createElement("div");
     reticle.style.position = "absolute";
     reticle.style.top = "50%";
