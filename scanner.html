@@ -17,21 +17,44 @@ body {
 }
 
 header {
-    width: 100%;
-    display: flex;
-    justify-content: left; /* Space out elements across header */
-    align-items: center;
-    padding: 20px;
-    background-color: #333;
-    color: white;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #333;
+  color: white;
 }
 
-header h2 {
-    margin: 0;
-    font-size: 1.2rem; /* Reduced size for better fitting */
-    flex-grow: 1; /* Allow h2 to take available space */
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
+h2 {
+  margin: 0;
+  font-size: 24px; /* Larger size for 'Welcome,' */
+}
+
+#techName {
+  font-size: 18px; /* Smaller size for the tech name */
+  margin-top: 5px;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+#logoutBtn:active {
+  background-color: #D32F2F;
+}
 
 /* Export Button */
 #exportBtn {
@@ -51,14 +74,6 @@ header h2 {
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 10px
-}
-
-#logoutBtn:hover {
-    opacity: 0.8;
-}
-
-#logoutBtn:active {
-    background-color: #D32F2F;
 }
 
 /* Page Content Styling */
@@ -114,8 +129,11 @@ main {
 </head>
 <body>
   <header>
-    <h2>Welcome, <span id="techName"></span></h2>
-    <div class="header-buttons">
+    <div class="header-left">
+      <h2>Welcome,</h2>
+      <span id="techName"></span>
+    </div>
+    <div class="header-right">
       <button id="logoutBtn">Log Out</button>
     </div>
   </header>
