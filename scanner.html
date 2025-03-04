@@ -6,118 +6,111 @@
   <title>Moebiz Inventory - Scanner</title>
   <head>
     <style>
-     /* General Body Styling */
+     /* General Styling */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Header Styling */
 header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background-color: #333;
-  color: white;
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Space out elements across header */
+    align-items: center;
+    padding: 20px;
+    background-color: #333;
+    color: white;
 }
 
 header h2 {
-  font-size: 1.5rem; /* Larger welcome message */
-  margin: 0;
+    margin: 0;
+    font-size: 1.2rem; /* Reduced size for better fitting */
+    flex-grow: 1; /* Allow h2 to take available space */
 }
 
+.header-buttons {
+    display: flex;
+    justify-content: space-between; /* Ensure buttons are on opposite ends */
+    gap: 20px;
+    width: 100%;
+}
+
+/* Export Button */
+#exportBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* Log Out Button */
 #logoutBtn {
-  background-color: #FF4136;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
+    background-color: #FF4136;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#logoutBtn:hover {
+    opacity: 0.8;
+}
+
+#logoutBtn:active {
+    background-color: #D32F2F;
 }
 
 /* Page Content Styling */
 main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80%;
-  max-width: 600px;
-  padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px 0;
 }
 
-/* Scan Form Styling */
 .scan-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
 .scan-form input,
 .scan-form button {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
 }
 
-/* Export Button Styling */
-#exportBtn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  width: 100%; /* Full width */
-  max-width: 400px;
-  margin-top: 10px;
-}
-
-/* Scan Log Styling */
 .scan-log {
-  width: 100%;
-  margin-top: 20px;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .scan-log table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.scan-log th, .scan-log td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+.scan-log th,
+.scan-log td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
 }
 
 .scan-log th {
-  background-color: #f4f4f4;
+    background-color: #f4f4f4;
 }
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: center;
-  }
-
-  #logoutBtn {
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  #exportBtn {
-    width: 100%;
-  }
-}
-
     </style>
   </head>
   
@@ -125,20 +118,27 @@ main {
 <body>
   <header>
     <h2>Welcome, <span id="techName"></span></h2>
-    <button id="logoutBtn">Log Out</button>
+    <div class="header-buttons">
+      <button id="exportBtn">Export & Email CSV</button>
+
+    </div>
   </header>
-  
   <main>
     <div class="scan-form">
+      <!-- Scanner container, which will be revealed when the scanner starts -->
+      <div id="scanner-container"></div>
+      
+      <!-- Barcode input field and action buttons -->
       <input type="text" id="barcodeInput" placeholder="Enter or scan barcode" autofocus />
       <button id="scanBtn">Add Scan</button>
       <button id="startScanBtn">Start Scanner</button>
       <button id="stopScanBtn">Stop Scanner</button>
+      <button id="logoutBtn">Log Out</button>
     </div>
-  
-    <button id="exportBtn">Export CSV</button>
-  
+
+    <!-- Last scanned barcode and logs -->
     <p>Last scanned: <strong id="lastScanned">None</strong></p>
+    <!-- Scan log will now be a table -->
     <div class="scan-log" id="scanLog"></div>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
