@@ -37,6 +37,7 @@ header h2 {
     justify-content: space-between; /* Ensure buttons are on opposite ends */
     gap: 20px;
     width: 100%;
+    border-radius: 25%;
 }
 
 /* Export Button */
@@ -46,6 +47,7 @@ header h2 {
     border: none;
     padding: 10px 15px;
     cursor: pointer;
+    border-radius: 25%;
 }
 
 /* Log Out Button */
@@ -89,6 +91,7 @@ main {
     font-size: 16px;
     width: 100%;
     max-width: 400px;
+    border-radius: 25%;
 }
 
 .scan-log {
@@ -119,8 +122,7 @@ main {
   <header>
     <h2>Welcome, <span id="techName"></span></h2>
     <div class="header-buttons">
-      <button id="exportBtn">Export & Email CSV</button>
-
+      <button id="logoutBtn">Log Out</button>
     </div>
   </header>
   <main>
@@ -133,7 +135,7 @@ main {
       <button id="scanBtn">Add Scan</button>
       <button id="startScanBtn">Start Scanner</button>
       <button id="stopScanBtn">Stop Scanner</button>
-      <button id="logoutBtn">Log Out</button>
+      <button id="exportBtn">Export CSV</button>
     </div>
 
     <!-- Last scanned barcode and logs -->
