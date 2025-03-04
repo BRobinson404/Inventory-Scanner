@@ -2,11 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Moebiz Inventory - Scanner</title>
   <head>
     <style>
      /* General Styling */
+     * {
+  box-sizing: border-box; /* Ensures elements don’t expand beyond their container */
+}
+     html {
+      overflow-x: hidden; /* Prevents horizontal scrolling */
+      max-width: 100vw; /* Ensures content does not exceed viewport width */
+      touch-action: manipulation; /* Reduces accidental gestures */
+     }
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -14,6 +23,15 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    max-width: 100vw; /* Ensures content does not exceed viewport width */
+    touch-action: manipulation; /* Reduces accidental gestures */
+}
+
+.container {
+  width: 100%;
+  max-width: 100vw; /* Prevents containers from exceeding the screen width */
+  overflow: hidden;
 }
 
 header {
