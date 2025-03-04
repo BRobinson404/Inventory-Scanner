@@ -19,25 +19,27 @@ body {
 header {
     width: 100%;
     display: flex;
-    justify-content: space-between; /* Align buttons to opposite sides on larger screens */
+    justify-content: space-between; /* Space out elements across header */
     align-items: center;
-    padding: 20px 20px; /* Increased padding for more space */
+    padding: 20px;
     background-color: #333;
     color: white;
 }
 
 header h2 {
     margin: 0;
-    font-size: 1.5rem; /* Adjusted font size for clarity */
+    font-size: 1.2rem; /* Reduced size for better fitting */
+    flex-grow: 1; /* Allow h2 to take available space */
 }
 
 .header-buttons {
     display: flex;
-    justify-content: space-between; /* Ensure the buttons are on opposite sides */
+    justify-content: space-between; /* Ensure buttons are on opposite ends */
+    gap: 20px;
     width: 100%;
-    gap: 20px; /* Standard gap for larger screens */
 }
 
+/* Export Button */
 #exportBtn {
     background-color: #4CAF50;
     color: white;
@@ -46,6 +48,7 @@ header h2 {
     cursor: pointer;
 }
 
+/* Log Out Button */
 #logoutBtn {
     background-color: #FF4136;
     color: white;
@@ -111,34 +114,33 @@ main {
 
 /* Responsive Design */
 @media (max-width: 480px) {
-    /* Adjust header layout */
+    /* Stack items vertically on smaller screens */
     header {
-        padding: 20px 15px;
         flex-direction: column;
-        align-items: flex-start; /* Left-align the header for a cleaner look */
+        align-items: flex-start; /* Left-align everything */
+        padding: 15px; /* Adjust padding */
     }
 
-    /* Add margin to separate the welcome message and the buttons */
     header h2 {
-        margin-bottom: 15px; /* Space between the welcome message and buttons */
+        font-size: 1rem; /* Smaller font size */
+        margin-bottom: 10px; /* Space between welcome message and buttons */
     }
 
-    /* Stack buttons vertically with more space */
     .header-buttons {
-        flex-direction: column;
-        gap: 15px; /* Larger gap between buttons */
-        width: 100%;
+        flex-direction: column; /* Stack buttons vertically */
         align-items: flex-start; /* Align buttons to the left */
+        gap: 15px; /* Space between buttons */
+        width: 100%;
     }
 
     #exportBtn,
     #logoutBtn {
-        width: 100%;
-        max-width: 300px; /* Prevent buttons from stretching too wide */
+        width: 100%; /* Make buttons take full width */
+        max-width: 300px; /* Limit width to avoid large buttons */
         text-align: center;
-        padding: 10px 20px;
     }
 }
+
     </style>
   </head>
   
