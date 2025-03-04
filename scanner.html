@@ -6,7 +6,7 @@
   <title>Moebiz Inventory - Scanner</title>
   <head>
     <style>
-      /* General Styling */
+     /* General Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -19,16 +19,23 @@ body {
 header {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Align buttons to opposite sides on larger screens */
     align-items: center;
-    padding: 10px 20px;
+    padding: 20px 20px; /* Increased padding for more space */
     background-color: #333;
     color: white;
 }
 
+header h2 {
+    margin: 0;
+    font-size: 1.5rem; /* Adjusted font size for clarity */
+}
+
 .header-buttons {
     display: flex;
-    gap: 20px;
+    justify-content: space-between; /* Ensure the buttons are on opposite sides */
+    width: 100%;
+    gap: 20px; /* Standard gap for larger screens */
 }
 
 #exportBtn {
@@ -104,22 +111,34 @@ main {
 
 /* Responsive Design */
 @media (max-width: 480px) {
+    /* Adjust header layout */
+    header {
+        padding: 20px 15px;
+        flex-direction: column;
+        align-items: flex-start; /* Left-align the header for a cleaner look */
+    }
+
+    /* Add margin to separate the welcome message and the buttons */
+    header h2 {
+        margin-bottom: 15px; /* Space between the welcome message and buttons */
+    }
+
+    /* Stack buttons vertically with more space */
     .header-buttons {
         flex-direction: column;
-        gap: 5px;
+        gap: 15px; /* Larger gap between buttons */
         width: 100%;
-        align-items: flex-end;
+        align-items: flex-start; /* Align buttons to the left */
     }
 
     #exportBtn,
     #logoutBtn {
         width: 100%;
-        max-width: 300px; /* Optional: Prevent buttons from being too wide */
+        max-width: 300px; /* Prevent buttons from stretching too wide */
         text-align: center;
-        padding: 10px 20px; /* Adjust padding if needed */
+        padding: 10px 20px;
     }
 }
-
     </style>
   </head>
   
