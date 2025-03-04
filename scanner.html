@@ -6,117 +6,120 @@
   <title>Moebiz Inventory - Scanner</title>
   <head>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
+      /* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+#exportBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#logoutBtn {
+    background-color: #FF4136;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#logoutBtn:hover {
+    opacity: 0.8;
+}
+
+#logoutBtn:active {
+    background-color: #D32F2F;
+}
+
+/* Page Content Styling */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px 0;
+}
+
+.scan-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.scan-form input,
+.scan-form button {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.scan-log {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.scan-log table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.scan-log th,
+.scan-log td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.scan-log th {
+    background-color: #f4f4f4;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .header-buttons {
         flex-direction: column;
-        align-items: center;
-      }
-  
-      /* Header Styling */
-      header {
+        gap: 5px;
         width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #333;
-        color: white;
-      }
-  
-      .header-buttons {
-        display: flex;
-        gap: 20px;
-      }
-  
-      #exportBtn {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-      }
-  
-      #logoutBtn {
-        background-color: #FF4136;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-      }
-  
-      /* Confirmation for Log Out */
-      #logoutBtn:hover {
-        opacity: 0.8;
-      }
-  
-      #logoutBtn:active {
-        background-color: #D32F2F;
-      }
-  
-      /* Page Content Styling */
-      main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 80%;
-        max-width: 600px;
-        padding: 20px 0;
-      }
-  
-      /* Form Styling */
-      .scan-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
+        align-items: flex-end;
+    }
+
+    #exportBtn,
+    #logoutBtn {
         width: 100%;
-      }
-  
-      .scan-form input,
-      .scan-form button {
-        padding: 10px;
-        font-size: 16px;
-        width: 100%;
-        max-width: 400px;
-      }
-  
-      /* Scan Log */
-      .scan-log {
-        width: 100%;
-        margin-top: 20px;
-      }
-  
-      .scan-log table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-  
-      .scan-log th, .scan-log td {
-        border: 1px solid #ddd;
-        padding: 8px;
+        max-width: 300px; /* Optional: Prevent buttons from being too wide */
         text-align: center;
-      }
-  
-      .scan-log th {
-        background-color: #f4f4f4;
-      }
-  
-      /* Responsive Design */
-      @media (max-width: 600px) {
-        header {
-          flex-direction: column;
-          text-align: center;
-        }
-        .header-buttons {
-          flex-direction: column;
-          width: 100%;
-          align-items: center;
-          gap: 10px;
-        }
-      }
+        padding: 10px 20px; /* Adjust padding if needed */
+    }
+}
+
     </style>
   </head>
   
