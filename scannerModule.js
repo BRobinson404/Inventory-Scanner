@@ -53,11 +53,11 @@ export function initScanner(onDetected) {
     reticle.id = "scanner-reticle";  // Add an ID for targeting
     reticle.style.position = "absolute";
     reticle.style.top = "50%";
-    reticle.style.left = "0";
+    reticle.style.left = "50%";
     reticle.style.width = "100%";
     reticle.style.height = "2px";
     reticle.style.background = "red";
-    reticle.style.transform = "translateY(-50%)";
+    reticle.style.transform = "translate(-50%, -50%)";
     scannerContainer.appendChild(reticle);
 
     Quagga.onProcessed(function (result) {

@@ -108,12 +108,30 @@ main {
     padding: 20px 0;
 }
 
+#reticle {
+  position: fixed; /* Keeps it in place regardless of scrolling */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Perfect centering */
+  width: 100px; /* Adjust size as needed */
+  height: 100px;
+  border: 2px solid red;
+  pointer-events: none; /* Ensures it doesn't interfere with input */
+}
+
 .scan-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     width: 100%;
+}
+
+#scanner-container {
+  width: 100%;  /* Let it scale */
+  max-width: 300px;
+  height: auto;
+  aspect-ratio: 1/1
 }
 
 #stopScanBtn {
