@@ -130,25 +130,22 @@ main {
 }
 
 .scan-log {
-    display: flex;
-    justify-content: center; /* Centers table horizontally */
-    width: 100%;
-    overflow-x: auto; /* Ensures no content is cut off */
-    margin-top: 20px;
+  width: 100%; /* Ensures the table takes up available space */
+  display: flex;
+  justify-content: center; /* Keeps the table centered */
 }
 
 .scan-log table {
-  margin: 0 auto; /* Centers the table within its container */
-  width: auto; /* Prevents table from stretching too wide */
-  max-width: 100%; /* Ensures table does not exceed the screen */
-  text-align: center; /* Centers text inside the table */
+  width: 100%; /* Makes the table responsive */
+  max-width: 100%; /* Prevents it from exceeding the parent container */
+  border-collapse: collapse; /* Keeps it compact */
 }
 
 .scan-log th,
 .scan-log td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+  padding: 8px; /* Keeps padding balanced */
+  word-wrap: break-word; /* Prevents text overflow */
+  white-space: nowrap; /* Prevents wrapping in small cells */
 }
 
 .scan-log th {
