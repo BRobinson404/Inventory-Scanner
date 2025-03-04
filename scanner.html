@@ -19,7 +19,7 @@ body {
 header {
     width: 100%;
     display: flex;
-    justify-content: space-between; /* Space out elements across header */
+    justify-content: left; /* Space out elements across header */
     align-items: center;
     padding: 20px;
     background-color: #333;
@@ -32,13 +32,6 @@ header h2 {
     flex-grow: 1; /* Allow h2 to take available space */
 }
 
-.header-buttons {
-    display: flex;
-    justify-content: space-between; /* Ensure buttons are on opposite ends */
-    gap: 20px;
-    width: 100%;
-    border-radius: 25%;
-}
 
 /* Export Button */
 #exportBtn {
@@ -47,7 +40,7 @@ header h2 {
     border: none;
     padding: 10px 15px;
     cursor: pointer;
-    border-radius: 25%;
+    border-radius: 50%;
 }
 
 /* Log Out Button */
@@ -57,6 +50,7 @@ header h2 {
     border: none;
     padding: 10px 15px;
     cursor: pointer;
+    border-radius: 50%;
 }
 
 #logoutBtn:hover {
@@ -91,7 +85,7 @@ main {
     font-size: 16px;
     width: 100%;
     max-width: 400px;
-    border-radius: 25%;
+    border-radius: 50%;
 }
 
 .scan-log {
