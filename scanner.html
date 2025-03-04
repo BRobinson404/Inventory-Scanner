@@ -213,6 +213,14 @@ main {
 
     let scans = [];
 
+    window.addEventListener('load', () => {
+  const savedScans = localStorage.getItem('scannedData');
+  if (savedScans) {
+    scans = JSON.parse(savedScans);
+    updateScanLog();
+  }
+});
+
     // User mapping data
     const userMappings = {
       'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
@@ -241,8 +249,18 @@ main {
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
       document.getElementById('lastScanned').textContent = barcode;
+
+      if (existingScan) {
+        existingScan.quantity++;
+      } else {
       scans.push({ barcode, timestamp, user: currentUser, quantity: 1 });
+      }
+      saveScansToLocalStorage();
       updateScanLog();
+    }
+
+    function saveScansToLocalStorage() {
+  localStorage.setItem('scannedData', JSON.stringify(scans));
     }
 
     // Function to update the scan log (table with editable quantity and delete button)
@@ -337,6 +355,7 @@ main {
 
     // Logout Button event listener
     document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('scannedData');
       localStorage.removeItem('loggedInUser');
       window.location.href = 'index.html';
     });
