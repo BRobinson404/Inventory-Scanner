@@ -4,11 +4,12 @@ export function initScanner(onDetected) {
         return;
     }
 
-    const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3"); 
+    const beep = new Audio("https://www.soundjay.com/buttons/sounds/button-35.mp3");
     let lastScannedCode = null;
+    let isScanning = false; // Flag to prevent multiple scans
 
     const scannerContainer = document.querySelector("#scanner-container");
-    
+
     // Dynamically set constraints based on the container's size
     const width = scannerContainer.offsetWidth;
     const height = scannerContainer.offsetHeight;
@@ -84,11 +85,19 @@ export function initScanner(onDetected) {
 
     Quagga.onDetected(function (result) {
         let code = result.codeResult.code;
-        if (code && code !== lastScannedCode) {
-            lastScannedCode = code;
-            beep.play();
-            onDetected(String(code));
-            setTimeout(() => { lastScannedCode = null; }, 2000); // Prevent duplicates within 2 seconds
+        
+        // Only process if the scan code is not the same as the last one and scanning is allowed
+        if (code && code !== lastScannedCode && !isScanning) {
+            isScanning = true;  // Prevent further scans
+
+            lastScannedCode = code; // Store the current scanned code
+            beep.play();  // Play beep sound
+            onDetected(String(code));  // Trigger the onDetected function
+            
+            setTimeout(() => {
+                lastScannedCode = null;  // Clear the scanned code after 2 seconds
+                isScanning = false;  // Allow scanning again after the delay
+            }, 2000);  // Prevent duplicates within 2 seconds
         }
     });
 }
