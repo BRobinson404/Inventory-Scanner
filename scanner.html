@@ -130,13 +130,18 @@ main {
 }
 
 .scan-log {
+    display: flex;
+    justify-content: center; /* Centers table horizontally */
     width: 100%;
+    overflow-x: auto; /* Ensures no content is cut off */
     margin-top: 20px;
 }
 
 .scan-log table {
-    width: 100%;
-    border-collapse: collapse;
+  margin: 0 auto; /* Centers the table within its container */
+  width: auto; /* Prevents table from stretching too wide */
+  max-width: 100%; /* Ensures table does not exceed the screen */
+  text-align: center; /* Centers text inside the table */
 }
 
 .scan-log th,
