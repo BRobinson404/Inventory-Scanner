@@ -108,7 +108,7 @@ main {
     padding: 20px 0;
 }
 
-#reticle {
+#scanner-reticle {
   position: fixed; /* Keeps it in place regardless of scrolling */
   top: 50%;
   left: 50%;
@@ -213,14 +213,6 @@ main {
 
     let scans = [];
 
-    window.addEventListener('load', () => {
-  const savedScans = localStorage.getItem('scannedData');
-  if (savedScans) {
-    scans = JSON.parse(savedScans);
-    updateScanLog();
-  }
-});
-
     // User mapping data
     const userMappings = {
       'donnie@moebiz.biz': { warehouse: 'DONNIE', bin: 'CAR STOCK' },
@@ -246,18 +238,23 @@ main {
 
     // Function to add scanned barcode to list
     function addScan(barcode) {
-      const now = new Date();
-      const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
-      document.getElementById('lastScanned').textContent = barcode;
+  const now = new Date();
+  const timestamp = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0].slice(0, 5);
+  document.getElementById('lastScanned').textContent = barcode;
 
-      if (existingScan) {
-        existingScan.quantity++;
-      } else {
-      scans.push({ barcode, timestamp, user: currentUser, quantity: 1 });
-      }
-      saveScansToLocalStorage();
-      updateScanLog();
-    }
+  // Check if barcode already exists in the scans array
+  let existingScan = scans.find(scan => scan.barcode === barcode);
+
+  if (existingScan) {
+    existingScan.quantity++;
+  } else {
+    scans.push({ barcode, timestamp, user: currentUser, quantity: 1 });
+  }
+
+  saveScansToLocalStorage();
+  updateScanLog();
+}
+
 
     function saveScansToLocalStorage() {
   localStorage.setItem('scannedData', JSON.stringify(scans));
@@ -296,6 +293,7 @@ main {
         quantityInput.min = 1;
         quantityInput.addEventListener('input', (e) => {
           scan.quantity = e.target.value; // Update quantity in scans array
+          saveScansToLocalStorage(); 
         });
         quantityCell.appendChild(quantityInput);
         row.appendChild(quantityCell);
@@ -305,6 +303,7 @@ main {
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => {
           scans.splice(index, 1);
+          saveScansToLocalStorage();
           updateScanLog(); // Re-render table after deletion
         });
         actionCell.appendChild(deleteButton);
@@ -374,6 +373,14 @@ main {
       document.getElementById('scanner-container').style.display = 'none';
       document.getElementById('startScanBtn').style.display = 'inline-block';
       document.getElementById('stopScanBtn').style.display = 'none';
+    });
+
+        window.addEventListener('load', () => {
+      const savedScans = localStorage.getItem('scannedData');
+      if (savedScans) {
+        scans = JSON.parse(savedScans);
+        updateScanLog();
+      }
     });
   </script>
 </body>
