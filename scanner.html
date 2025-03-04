@@ -109,14 +109,15 @@ main {
 }
 
 #scanner-reticle {
-  position: fixed; /* Keeps it in place regardless of scrolling */
+  position: absolute; /* Now relative to #scanner-container */
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Perfect centering */
-  width: 100px; /* Adjust size as needed */
-  height: 100px;
-  border: 2px solid red;
-  pointer-events: none; /* Ensures it doesn't interfere with input */
+  transform: translate(-50%, -50%); /* Centers it perfectly */
+  width: 80%; /* Adjust size as needed */
+  max-width: 100px; /* Keeps it from exceeding container */
+  height: 2px; /* Thin horizontal line */
+  background-color: red; /* Or keep border if preferred */
+  pointer-events: none;
 }
 
 .scan-form {
@@ -128,10 +129,15 @@ main {
 }
 
 #scanner-container {
-  width: 100%;  /* Let it scale */
+  position: relative; /* Ensures child elements are positioned relative to this container */
+  width: 100%;  
   max-width: 300px;
   height: auto;
-  aspect-ratio: 1/1
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevents any content from escaping */
 }
 
 #stopScanBtn {
