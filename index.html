@@ -15,57 +15,82 @@
       align-items: center;
       height: 100vh;
     }
+
     .login-container {
       background: #fff;
-      padding: 20px;
+      padding: 25px;
       width: 90%;
       max-width: 400px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       text-align: center;
-      color: #333;
     }
+
+    .logo {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
     form {
       display: flex;
       flex-direction: column;
+      gap: 12px;
     }
-    input[type="text"],
-    input[type="password"] {
+
+    input {
       padding: 12px;
-      margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
+      outline: none;
+      transition: 0.2s;
     }
+
+    input:focus {
+      border-color: #007BFF;
+      box-shadow: 0 0 5px rgba(0,123,255,0.2);
+    }
+
     button {
       padding: 12px;
       background: #007BFF;
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
+      transition: 0.2s;
     }
+
     button:hover {
       background: #0056b3;
     }
+
     .error-message {
       color: red;
-      text-align: center;
-      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h1>Moebiz Inventory Login</h1>
+    <img src="https://moebiz.biz/images/logo.svg" alt="Moebiz Logo" class="logo">
+    <h1>VanScan</h1>
+    <h3>Brobinson Applications</h3>
     <form id="loginForm">
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Log In</button>
-      <p id="errorMessage" class="error-message" style="display: none;">Invalid username. Please try again.</p>
+      <p id="errorMessage" class="error-message">Invalid username. Please try again.</p>
     </form>
   </div>
 
@@ -90,7 +115,7 @@
         localStorage.setItem('loggedInUser', username);
         window.location.href = 'scanner.html';
       } else {
-        errorMessage.style.display = 'block';
+        errorMessage.style.opacity = '1';
       }
     });
   </script>
