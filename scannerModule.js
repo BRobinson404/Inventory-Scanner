@@ -28,25 +28,27 @@ export function initScanner(onDetected) {
                 height: 480,
                 aspectRatio: {ideal: 1.777},
                 facingMode: "environment",
-                advanced: [{ focusMode: "continuous" }]
+                advanced: [{ focusMode: "continuous" }, { torch: true }]
+
             }
         },
         locator: {
-            patchSize: "x-small",
-            halfSample: false
+            patchSize: "medium",  // Try increasing to "medium" or "large"
+            halfSample: true  // Process at a lower resolution for better detection
         },
-        frequency: 25, // Processes frames more often
-        detectionMode: "fast", // Prioritizes speed over accuracy
+        frequency: 10,  // Lowering this makes it process each frame more carefully
+        detectionMode: "balanced",  // Balances speed and accuracy
+        
         decoder: {
-            readers: ["code_128_reader", "code_39_reader"],
+            readers: ["code_128_reader", "code_39_reader", "ean_reader", "upc_reader"],
             multiple: false
         },
         locate: true,
         area: { 
-            top: "30%",     // Move scan area up slightly
-            right: "10%",  
-            left: "10%",   
-            bottom: "50%"   // Reduce scanning area height
+            top: "20%",  
+            right: "5%",  
+            left: "5%",  
+            bottom: "80%"  
         }
     }, function (err) {
         if (err) {
