@@ -26,13 +26,14 @@ export function initScanner(onDetected) {
             constraints: {
                 width: 640,  
                 height: 480,
+                aspectRatio: {ideal: 1.777},
                 facingMode: "environment",
                 advanced: [{ focusMode: "continuous" }]
             }
         },
         locator: {
-            patchSize: "small",
-            halfSample: true
+            patchSize: "x-small",
+            halfSample: false
         },
         frequency: 25, // Processes frames more often
         detectionMode: "fast", // Prioritizes speed over accuracy
@@ -41,11 +42,11 @@ export function initScanner(onDetected) {
             multiple: false
         },
         locate: true,
-        area: { // Restrict scanning area to the reticle
-            top: "40%",    
+        area: { 
+            top: "30%",     // Move scan area up slightly
             right: "10%",  
             left: "10%",   
-            bottom: "60%"  
+            bottom: "50%"   // Reduce scanning area height
         }
     }, function (err) {
         if (err) {
