@@ -60,35 +60,41 @@ export function initScanner(onDetected) {
     const reticle = document.createElement("div");
     reticle.id = "scanner-reticle";  // Add an ID for targeting
     reticle.style.position = "absolute";
-    reticle.style.top = "50%";
-    reticle.style.left = "50%";
-    reticle.style.width = "100%";
-    reticle.style.height = "2px";
-    reticle.style.background = "red";
-    reticle.style.transform = "translate(-50%, -50%)";
+    reticle.style.top = "50%";  // Center vertically
+    reticle.style.left = "50%"; // Center horizontally
+    reticle.style.width = "80%";  // Make it a box instead of a line
+    reticle.style.height = "50px"; 
+    reticle.style.border = "2px dashed red";  // Dashed border for better visibility
+    reticle.style.background = "rgba(255, 0, 0, 0.1)"; // Slight red tint to guide users
+    reticle.style.transform = "translate(-50%, -50%)"; // Ensure perfect centering
+    reticle.style.pointerEvents = "none"; // Prevents interaction
     scannerContainer.appendChild(reticle);
 
+
     Quagga.onProcessed(function (result) {
-        if (result) {
+        if (result && result.boxes) {
             const canvas = Quagga.canvas.dom.overlay;
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (result.boxes) {
-                result.boxes.forEach(box => {
+    
+            result.boxes.forEach(box => {
+                const x = (box[0].x + box[2].x) / 2; // Get center of barcode
+                const y = (box[0].y + box[2].y) / 2;
+    
+                // Only detect if barcode is inside the reticle
+                const inReticle = y > canvas.height * 0.4 && y < canvas.height * 0.6;
+    
+                if (inReticle) {
                     ctx.beginPath();
-                    ctx.strokeStyle = "#00FF00"; // Bright green for visibility
-                    ctx.lineWidth = 2;
-                    ctx.moveTo(box[0].x, box[0].y);
-                    box.forEach((point, index) => {
-                        if (index > 0) ctx.lineTo(point.x, point.y);
-                    });
-                    ctx.closePath();
+                    ctx.strokeStyle = "#00FF00"; // Green if inside reticle
+                    ctx.lineWidth = 3;
+                    ctx.rect(box[0].x, box[0].y, box[2].x - box[0].x, box[2].y - box[0].y);
                     ctx.stroke();
-                });
-            }
+                }
+            });
         }
     });
+    ;
 
     Quagga.onDetected(function (result) {
         let code = result.codeResult.code;
