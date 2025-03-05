@@ -27,5 +27,5 @@ This project is a mobile-first, in-house inventory scanning tool designed for Mo
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/moebiz-inventory-scanner.git
-   cd moebiz-inventory-scanner
+   git clone https://github.com/brobinson404/inventory-scanner.git
+   cd inventory-scanner
