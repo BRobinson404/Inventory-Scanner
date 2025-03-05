@@ -24,23 +24,23 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: scannerContainer,
             constraints: {
-                width: 300,  // Fixed width for video feed
-                height: 300, // Fixed height for video feed
+                width: 640,  // Higher width improves detection accuracy
+                height: 480,
                 facingMode: "environment"
-            }
+            },
+            singleChannel: false
         },
         locator: {
-            patchSize: "medium",
-            halfSample: false,
+            patchSize: "small",  // Reduces processing area for faster scans
+            halfSample: true  // Makes image processing faster
         },
         decoder: {
-            readers: [
-                "code_128_reader", 
-                "code_39_reader"
-            ],
+            readers: ["code_128_reader", "code_39_reader"],  // Use only necessary barcode formats
             multiple: false
         },
-        locate: true
+        locate: true,
+        frequency: 20,  // Process frames more frequently
+        detectionMode: "fast"  // Prioritizes speed over accuracy
     }, function (err) {
         if (err) {
             console.error("Quagga initialization failed:", err);
@@ -48,6 +48,7 @@ export function initScanner(onDetected) {
         }
         Quagga.start();
     });
+    
 
     // Create reticle with an id for better targeting
     const reticle = document.createElement("div");
