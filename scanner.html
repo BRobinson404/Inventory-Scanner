@@ -109,16 +109,16 @@ main {
 }
 
 #scanner-reticle {
-  position: absolute; /* Now relative to #scanner-container */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Centers it perfectly */
-  width: 80%; /* Adjust size as needed */
-  max-width: 100px; /* Keeps it from exceeding container */
-  height: 2px; /* Thin horizontal line */
-  background-color: red; /* Or keep border if preferred */
-  pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;  /* Width of the scanning box */
+    height: 50px; /* Height of the scanning box */
+    border: 2px dashed red;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
+
 
 .scan-form {
     display: flex;

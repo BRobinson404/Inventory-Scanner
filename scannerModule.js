@@ -24,23 +24,29 @@ export function initScanner(onDetected) {
             type: "LiveStream",
             target: scannerContainer,
             constraints: {
-                width: 640,  // Higher width improves detection accuracy
+                width: 640,  
                 height: 480,
-                facingMode: "environment"
-            },
-            singleChannel: false
+                facingMode: "environment",
+                advanced: [{ focusMode: "continuous" }]
+            }
         },
         locator: {
-            patchSize: "small",  // Reduces processing area for faster scans
-            halfSample: true  // Makes image processing faster
+            patchSize: "small",
+            halfSample: true
         },
+        frequency: 25, // Processes frames more often
+        detectionMode: "fast", // Prioritizes speed over accuracy
         decoder: {
-            readers: ["code_128_reader", "code_39_reader"],  // Use only necessary barcode formats
+            readers: ["code_128_reader", "code_39_reader"],
             multiple: false
         },
         locate: true,
-        frequency: 20,  // Process frames more frequently
-        detectionMode: "fast"  // Prioritizes speed over accuracy
+        area: { // Restrict scanning area to the reticle
+            top: "40%",    
+            right: "10%",  
+            left: "10%",   
+            bottom: "60%"  
+        }
     }, function (err) {
         if (err) {
             console.error("Quagga initialization failed:", err);
