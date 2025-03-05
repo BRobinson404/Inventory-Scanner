@@ -331,8 +331,8 @@ main {
         let item = scan.barcode.trim();
         let itemFormatted = item;
 
-        if (!isNaN(itemFormatted[0])) {
-          itemFormatted = itemFormatted.padStart(itemFormatted.length + 1, '0');
+        if (/^\d/.test(itemFormatted)) {
+          itemFormatted = '0' + itemFormatted;
         }
 
         itemFormatted = `"${itemFormatted}"`;
