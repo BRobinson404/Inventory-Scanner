@@ -179,7 +179,7 @@ main {
 
 .scan-log th:nth-child(1),
 .scan-log td:nth-child(1) {
-  width: 60%; /* Expands the part number column */
+  width: 55%; /* Expands the part number column */
   overflow: hidden;
   text-overflow: ellipsis; /* Prevents text from overflowing */
 }
@@ -191,12 +191,12 @@ main {
 
 .scan-log th:nth-child(3),
 .scan-log td:nth-child(3) {
-  width: 25%; /* Action column */
+  width: 25%; /* Ensures enough space for the delete button */
 }
 
 /* Shrinking the quantity input */
 .scan-log input[type="number"] {
-  width: 50px; /* Only enough space for 3 digits */
+  width: 60px; /* Only enough space for 3 digits */
   text-align: center;
 }
 
