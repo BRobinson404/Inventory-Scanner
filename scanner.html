@@ -173,6 +173,7 @@ main {
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  margin-left: 10px;
 }
 
 .scan-log button:hover {
@@ -193,14 +194,14 @@ main {
 
 .scan-log th:nth-child(1),
 .scan-log td:nth-child(1) {
-  width: 60%; /* Expands the part number column */
+  width: 55%; /* Expands the part number column */
   overflow: hidden;
   text-overflow: ellipsis; /* Prevents text from overflowing */
 }
 
 .scan-log th:nth-child(2),
 .scan-log td:nth-child(2) {
-  width: 20%; /* Shrinks the quantity column */
+  width: 25%; /* Shrinks the quantity column */
   text-align: center;
 }
 
@@ -216,7 +217,7 @@ main {
 
 /* Shrinking the quantity input */
 .scan-log input[type="number"] {
-  width: 60px; /* Only enough space for 3 digits */
+  width: 80px; /* Only enough space for 3 digits */
   text-align: center;
 }
 
