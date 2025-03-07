@@ -175,6 +175,10 @@ main {
   border-radius: 5px;
 }
 
+.scan-log button:hover {
+  background-color: #d32f2f;
+}
+
 .scan-log th,
 .scan-log td {
   padding: 10px;
@@ -184,18 +188,19 @@ main {
 
 .scan-log th {
     background-color: #f4f4f4;
+    text-align: center;
 }
 
 .scan-log th:nth-child(1),
 .scan-log td:nth-child(1) {
-  width: 50%; /* Expands the part number column */
+  width: 60%; /* Expands the part number column */
   overflow: hidden;
   text-overflow: ellipsis; /* Prevents text from overflowing */
 }
 
 .scan-log th:nth-child(2),
 .scan-log td:nth-child(2) {
-  width: 15%; /* Shrinks the quantity column */
+  width: 20%; /* Shrinks the quantity column */
   text-align: center;
 }
 
@@ -206,12 +211,12 @@ main {
 
 .scan-log th:nth-child(3),
 .scan-log td:nth-child(3) {
-  width: 25%; /* Ensures enough space for the delete button */
+  width: 20%; /* Ensures enough space for the delete button */
 }
 
 /* Shrinking the quantity input */
 .scan-log input[type="number"] {
-  width: 50px; /* Only enough space for 3 digits */
+  width: 60px; /* Only enough space for 3 digits */
   text-align: center;
 }
 
